@@ -20,10 +20,6 @@ int look_for_asteroids(const Asteroid& tower, const std::vector<Asteroid>& aster
             const auto diff = A - tower;
             angles.insert(atan2(diff.y, diff.x));
         });
-    for (auto x : angles) {
-        std::cout << x << ' ';
-    }
-    std::cout << '\n';
     return angles.size();
 }
 
