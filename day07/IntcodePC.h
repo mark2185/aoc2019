@@ -12,15 +12,19 @@ enum class State {
 
 class IntcodePC {
 private:
+    /// Program Counter
     int pc = 0;
-    int relative_base = 0;
-    State state = State::RUNNING;
+
+    long relative_base = 0;
     long result = 0;
+
+    State state = State::RUNNING;
+
     std::queue<int> input_data;
 
-    std::vector<long> instructions;
+    std::vector<long> memory;
 
-    using fn = std::function<void(IntcodePC&, int&, std::array<int, 3>&, std::vector<long>&)>;
+    using fn = std::function<void(IntcodePC&, std::array<int, 3>&)>;
     const std::map<int, fn> opcodes = {
         { 1, std::mem_fn(&IntcodePC::add)},
         { 2, std::mem_fn(&IntcodePC::mul)},
@@ -34,24 +38,24 @@ private:
         {99, std::mem_fn(&IntcodePC::halt)}
     };
 
-    void add(int& pc, std::array<int, 3>& modes, std::vector<long>& input_tokens);
-    void mul(int& pc, std::array<int, 3>& modes, std::vector<long>& input_tokens);
-    void read(int& pc, std::array<int, 3>& modes, std::vector<long>& input_tokens);
-    void print(int& pc, std::array<int, 3>& modes, std::vector<long>& input_tokens);
-    void jit(int& pc, std::array<int, 3>& modes, std::vector<long>& input_tokens);
-    void jif(int& pc, std::array<int, 3>& modes, std::vector<long>& input_tokens);
-    void lt(int& pc, std::array<int, 3>& modes, std::vector<long>& input_tokens);
-    void eq(int& pc, std::array<int, 3>& modes, std::vector<long>& input_tokens);
-    void offset_rb(int& pc, std::array<int, 3>& modes, std::vector<long>& input_tokens);
-    void halt(int& pc, std::array<int, 3>& modes, std::vector<long>& input_tokens);
+    void add(const std::array<int, 3>& modes);
+    void mul(const std::array<int, 3>& modes);
+    void read(const std::array<int, 3>& modes);
+    void print(const std::array<int, 3>& modes);
+    void jit(const std::array<int, 3>& modes);
+    void jif(const std::array<int, 3>& modes);
+    void lt(const std::array<int, 3>& modes);
+    void eq(const std::array<int, 3>& modes);
+    void offset_rb(const std::array<int, 3>& modes);
+    void halt(const std::array<int, 3>& modes);
 
-    long get_arg(long value, int mode, const std::vector<long>& input_tokens);
+    long get_arg(long value, int mode);
 
 public:
     IntcodePC() = default;
-    IntcodePC(const std::vector<long>& instructions);
-    void run(std::stringstream& input_data);
-    void run(std::vector<long> instructions, std::queue<int>& input_data, bool use_states = false);
+
+    void run(std::queue<int>& input_data);
+    void load_program(const std::vector<long>& program);
     long get_result() const;
 
     void reboot();
