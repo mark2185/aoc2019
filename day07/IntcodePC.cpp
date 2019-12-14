@@ -5,21 +5,23 @@ void IntcodePC::reboot() {
     pc = 0;
     relative_base = 0;
     result = 0;
+    state = State::READY;
     memory.clear();
 }
 
 void IntcodePC::load_program(const std::vector<long>& program) {
     memory = program;
+    memory.insert(memory.end(), 1000, 0);
 }
 
 void IntcodePC::run(std::queue<int>& input_data) {
-    if (memory.empty()) {
-        std::cerr << "No program to run!\n";
-        return;
-    }
     this->input_data.swap(input_data);
-    if (state == State::PAUSED) {
+    if (state == State::PAUSED || state == State::READY) {
         state = State::RUNNING;
+    }
+    if (state == State::RUNNING && memory.empty()) {
+        std::cerr << "No program to run!\n";
+        throw;
     }
     while (state == State::RUNNING) {
         const int arg1_mode = (memory[pc] %   1000) / 100;
@@ -32,7 +34,7 @@ void IntcodePC::run(std::queue<int>& input_data) {
     }
 }
 
-long IntcodePC::get_arg(long value, int mode) {
+long IntcodePC::get_arg(long value, int mode) const {
     long ret_val;
     switch (mode) {
         case 0:
@@ -142,4 +144,8 @@ void IntcodePC::halt(const std::array<int, 3>&) {
 
 long IntcodePC::get_result() const {
     return result;
+}
+
+bool IntcodePC::is_finished() const {
+    return state == State::STOPPED;
 }

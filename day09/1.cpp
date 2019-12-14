@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
+#include <sstream>
+#include <queue>
 
 #include "../day07/IntcodePC.h"
 
@@ -22,21 +24,19 @@ int main(int argc, char *argv[]) {
     while (ss >> elem) {
         input_tokens.emplace_back(std::stol(elem));
     }
-    for (int i = 0; i < 1000; ++i) {
-        input_tokens.emplace_back(0);
-    }
 
-    std::stringstream input_data;
-
+    std::queue<int> input_data;
 
     // part 1
     IntcodePC sensor_boost;
-    input_data << 1;
-    sensor_boost.run(input_tokens, input_data);
+    sensor_boost.load_program(input_tokens);
+    input_data.push(1);
+    sensor_boost.run(input_data);
     // part 2
     sensor_boost.reboot();
-    input_data << 2;
-    sensor_boost.run(input_tokens, input_data);
+    sensor_boost.load_program(input_tokens);
+    input_data.push(2);
+    sensor_boost.run(input_data);
 
     return 0;
 }

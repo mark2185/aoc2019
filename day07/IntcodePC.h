@@ -1,13 +1,12 @@
 #pragma once
 #include <vector>
-#include <sstream>
 #include <array>
 #include <map>
 #include <functional>
 #include <queue>
 
 enum class State {
-    RUNNING, PAUSED, STOPPED
+    READY, RUNNING, PAUSED, STOPPED
 };
 
 class IntcodePC {
@@ -18,7 +17,7 @@ private:
     long relative_base = 0;
     long result = 0;
 
-    State state = State::RUNNING;
+    State state = State::READY;
 
     std::queue<int> input_data;
 
@@ -49,14 +48,16 @@ private:
     void offset_rb(const std::array<int, 3>& modes);
     void halt(const std::array<int, 3>& modes);
 
-    long get_arg(long value, int mode);
+    long get_arg(long value, int mode) const;
 
 public:
     IntcodePC() = default;
 
     void run(std::queue<int>& input_data);
     void load_program(const std::vector<long>& program);
+
     long get_result() const;
+    bool is_finished() const;
 
     void reboot();
 };
