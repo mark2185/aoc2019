@@ -1,20 +1,20 @@
 #include <cstdio>
-#include <iostream>
 #include <string>
+#include <algorithm>
 
 bool has_doubles(const std::string& number) {
-    return false;
+    return std::adjacent_find(std::begin(number), std::end(number)) != std::end(number);
 }
 
 bool is_rising(const std::string& number) {
-
+    auto copy = number;
+    std::sort(std::begin(copy), std::end(copy));
+    return number == copy;
 }
 
 int main() {
     int lower_bound, upper_bound;
     scanf("%d-%d", &lower_bound, &upper_bound);
-
-    std::cout << lower_bound << '-' << upper_bound << '\n';
 
     int total = 0;
     for (int number = lower_bound; number <= upper_bound; ++number) {
