@@ -72,8 +72,16 @@ void IntcodePC::mul(const std::array<int, 3>& modes) {
 }
 
 void IntcodePC::read(const std::array<int, 3>& modes) {
-    int val = input_data.front();
-    input_data.pop();
+    int val;
+
+    if (!input_data.empty()) {
+        val = input_data.front();
+        input_data.pop();
+    }
+    else {
+        std::cout << "Data container empty, please input\n";
+        std::cin >> val;
+    }
 
     long destination = (modes[0]) ? memory[++pc] + relative_base : memory[++pc];
 
